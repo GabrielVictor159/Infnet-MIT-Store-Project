@@ -10,7 +10,8 @@
 			"extensions": [
 				"vscjava.vscode-java-pack",
 				"vmware.vscode-spring-boot",
-				"vmware.vscode-boot-dev-pack"
+				"vmware.vscode-boot-dev-pack",
+				"ritwickdey.LiveServer"
 			]
 		}
 	}

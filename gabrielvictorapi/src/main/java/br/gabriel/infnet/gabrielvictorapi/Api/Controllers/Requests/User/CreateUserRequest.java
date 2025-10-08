@@ -1,10 +1,14 @@
 package br.gabriel.infnet.gabrielvictorapi.Api.Controllers.Requests.User;
 
+import java.util.Date;
+
 public class CreateUserRequest {
     private String name;
     private String password;
     private String email;
+    private String cpf;
     private String phone;
+    private Date birthDate;
     
     public String getName() {
         return name;
@@ -24,10 +28,25 @@ public class CreateUserRequest {
     public void setEmail(String email) {
         this.email = email;
     }
+    public String getCpf() {
+        return cpf;
+    }
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
     public String getPhone() {
         return phone;
     }
     public void setPhone(String phone) {
         this.phone = phone;
     }
+    public Date getBirthDate() {
+        return birthDate;
+    }
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    
+    
 }

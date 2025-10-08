@@ -2,15 +2,19 @@ package br.gabriel.infnet.gabrielvictorapi.Domain.Models;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import br.gabriel.infnet.gabrielvictorapi.Domain.Enums.UserRulesEnum;
 import br.gabriel.infnet.gabrielvictorapi.Shared.Converters.PasswordConverter;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,6 +40,13 @@ public class User {
     private String email;
     @Column(nullable = true)
     private String phone;
+    @Column(nullable = false)
+    private String cpf;
+    @Column(nullable = false)
+    private Date birthDate;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRulesEnum rule;
     @Column(nullable = false)
     private LocalDateTime insertAt = LocalDateTime.now();
     @Column(nullable = false)
@@ -95,6 +106,30 @@ public class User {
         this.phone = phone;
     }
 
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public UserRulesEnum getRule() {
+        return rule;
+    }
+
+    public void setRule(UserRulesEnum rule) {
+        this.rule = rule;
+    }
+
     public LocalDateTime getInsertAt() {
         return insertAt;
     }
@@ -142,6 +177,7 @@ public class User {
     public void setFiles(List<Files> files) {
         this.files = files;
     }
+   
 
     
 }

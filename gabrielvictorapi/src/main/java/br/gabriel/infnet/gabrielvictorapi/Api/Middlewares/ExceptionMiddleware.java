@@ -10,6 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import br.gabriel.infnet.gabrielvictorapi.Application.DTO.Core.ErrorResponseDTO;
 import br.gabriel.infnet.gabrielvictorapi.Shared.Exceptions.BadRequestException;
+import br.gabriel.infnet.gabrielvictorapi.Shared.Exceptions.ForbiddenException;
 import br.gabriel.infnet.gabrielvictorapi.Shared.Exceptions.OperationException;
 
 @RestControllerAdvice 
@@ -40,6 +41,20 @@ public class ExceptionMiddleware {
         );
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponseDTO> handleForbiddenException(ForbiddenException ex, WebRequest request) {
+        List<String> errors = new ArrayList<>();
+
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+            HttpStatus.FORBIDDEN.value(),
+            errors, 
+            ex.getMessage(), 
+            request.getDescription(false).replace("uri=", "") 
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
