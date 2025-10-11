@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.gabriel.infnet.gabrielvictorapi.Api.Controllers.Requests.User.AlterUserRequest;
 import br.gabriel.infnet.gabrielvictorapi.Api.Controllers.Requests.User.CreateUserRequest;
 import br.gabriel.infnet.gabrielvictorapi.Api.Controllers.Requests.User.ResetPasswordRequest;
-import br.gabriel.infnet.gabrielvictorapi.Api.Mappers.User.UserMapperExtension;
+import br.gabriel.infnet.gabrielvictorapi.Api.Mappers.User.UserMapperRequestsExtension;
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.AlterUserCommand;
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.CreateUserCommand;
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.ForbiddenPasswordCommand;
@@ -39,7 +39,7 @@ public class UserController {
 
     @PostMapping("/CreateUser")
     public ResponseEntity<Object> createUser(@RequestBody @Valid CreateUserRequest request) {
-        CreateUserCommand command = UserMapperExtension.toCreateUserCommand(request);
+        CreateUserCommand command = UserMapperRequestsExtension.toCreateUserCommand(request);
         CreateUserDTO result = mediator.Handler(command);
         return new ResponseEntity<Object>(result.Message, HttpStatus.OK);
     }
@@ -55,7 +55,7 @@ public class UserController {
 
     @PatchMapping("/AlterUser")
     public ResponseEntity<Object> AlterUser(@RequestBody @Valid AlterUserRequest request,  HttpServletRequest httpRequest) {
-        AlterUserCommand command = UserMapperExtension.toAlterUserCommand(request);
+        AlterUserCommand command = UserMapperRequestsExtension.toAlterUserCommand(request);
         var idRequestUser = jwtTokenService.getIdFromHttpRequest(httpRequest);
         command.setRequestUserId(idRequestUser);
         mediator.Handler(command);
@@ -74,5 +74,5 @@ public class UserController {
         String result = mediator.Handler(command);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
+    
 }

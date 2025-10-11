@@ -1,6 +1,7 @@
 package br.gabriel.infnet.gabrielvictorapi.Infraestructure.Repositories;
 
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,4 +15,5 @@ public interface UserRepository extends JpaRepository<User, Integer>{
     Optional<User> findByEmail(String email);
     Optional<User> findByCreateId(UUID id);
     Optional<User> findByAlterPasswordId(UUID id);
+    List<User> findByIdIn(List<Integer> ids);
 }

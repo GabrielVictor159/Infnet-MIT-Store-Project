@@ -1,7 +1,18 @@
 package br.gabriel.infnet.gabrielvictorapi.Domain.Enums;
 
 public enum FileTypeEnum {
-    Icon,
-    Image_Gallery,
-    User_Document
+    Icon(UserRulesEnum.User),
+    Image_Gallery(UserRulesEnum.User),
+    User_Document(UserRulesEnum.Admin);
+
+    private final UserRulesEnum requiredRole;
+
+    FileTypeEnum(UserRulesEnum requiredRole) {
+        this.requiredRole = requiredRole;
+    }
+
+    public UserRulesEnum getRequiredRole() {
+        return requiredRole;
+    }
 }
+

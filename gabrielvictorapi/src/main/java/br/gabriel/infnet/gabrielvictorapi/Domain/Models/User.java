@@ -3,7 +3,9 @@ package br.gabriel.infnet.gabrielvictorapi.Domain.Models;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import br.gabriel.infnet.gabrielvictorapi.Domain.Enums.UserRulesEnum;
@@ -64,7 +66,7 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "file_id") 
     )
-    private List<Files> files = new ArrayList<>();
+    private Set<Files> files = new HashSet<>();
 
     public Integer getId() {
         return id;
@@ -170,14 +172,13 @@ public class User {
         this.alterPasswordId = alterPasswordId;
     }
 
-    public List<Files> getFiles() {
+    public Set<Files> getFiles() {
         return files;
     }
 
-    public void setFiles(List<Files> files) {
+    public void setFiles(Set<Files> files) {
         this.files = files;
     }
-   
 
     
 }

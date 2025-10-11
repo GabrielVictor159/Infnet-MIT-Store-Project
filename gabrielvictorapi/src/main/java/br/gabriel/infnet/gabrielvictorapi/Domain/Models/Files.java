@@ -1,8 +1,8 @@
 package br.gabriel.infnet.gabrielvictorapi.Domain.Models;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -15,7 +15,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
@@ -26,26 +25,25 @@ public class Files {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column
     private UUID id;
-    @Lob
-    @Column(nullable = true)
-    private Byte[] content;
+    @Column(name = "content", columnDefinition = "bytea")
+    private byte[] content;
     @Column(nullable = false)
     private String fileName;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FileTypeEnum fileType;
     @Column(nullable = false)
-    private LocalDateTime InsertDate = LocalDateTime.now();
+    private LocalDateTime insertDate = LocalDateTime.now();
     @Column(nullable = false)
-    private LocalDateTime UpdateDate = LocalDateTime.now();
+    private LocalDateTime updateDate = LocalDateTime.now();
 
     @ManyToMany(mappedBy = "files")
     @JsonBackReference
-    private List<User> users = new ArrayList<>();
+    private Set<User> users = new HashSet<>();
 
     @ManyToMany(mappedBy = "files")
     @JsonBackReference
-    private List<Product> products = new ArrayList<>();
+    private Set<Product> products = new HashSet<>();
 
     public UUID getId() {
         return id;
@@ -55,11 +53,11 @@ public class Files {
         this.id = id;
     }
 
-    public Byte[] getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(Byte[] content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 
@@ -80,35 +78,37 @@ public class Files {
     }
 
     public LocalDateTime getInsertDate() {
-        return InsertDate;
+        return insertDate;
     }
 
     public void setInsertDate(LocalDateTime insertDate) {
-        InsertDate = insertDate;
+        this.insertDate = insertDate;
     }
 
     public LocalDateTime getUpdateDate() {
-        return UpdateDate;
+        return updateDate;
     }
 
     public void setUpdateDate(LocalDateTime updateDate) {
-        UpdateDate = updateDate;
+        this.updateDate = updateDate;
     }
 
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
     }
 
-    public List<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(Set<Product> products) {
         this.products = products;
     }
+
+
 
 }

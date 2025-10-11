@@ -7,7 +7,7 @@ import br.gabriel.infnet.gabrielvictorapi.Api.Controllers.Requests.User.CreateUs
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.AlterUserCommand;
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.CreateUserCommand;
 
-public final class UserMapperExtension {
+public final class UserMapperRequestsExtension {
     public static CreateUserCommand toCreateUserCommand(CreateUserRequest request){
         var command = new CreateUserCommand();
         BeanUtils.copyProperties(request, command);

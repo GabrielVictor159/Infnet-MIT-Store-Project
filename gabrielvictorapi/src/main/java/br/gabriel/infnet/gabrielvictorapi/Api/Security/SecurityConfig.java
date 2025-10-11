@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .requestMatchers("/User/ConfirmUser/**").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
             )
             .formLogin(form -> form.disable())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

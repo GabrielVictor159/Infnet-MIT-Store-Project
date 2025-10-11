@@ -46,6 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         userDetails, null, userDetails.getAuthorities());
                 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                //passa ate aqui
             }
         }
         
