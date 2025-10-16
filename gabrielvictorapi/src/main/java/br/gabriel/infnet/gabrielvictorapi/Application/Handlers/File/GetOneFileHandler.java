@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +32,7 @@ public class GetOneFileHandler implements CommandHandler<GetOneFileCommand, GetO
         GetOneFileDTO result = null;
         List<Integer> usersId = new ArrayList();
 
-        var file = filesRepository.findByIdWithAssociations(command.getId());
+        var file = filesRepository.findByIdWithDeepAssociations(command.getId());
         if (!file.isPresent())
             throw new OperationException("Não foi possivel localizar o arquivo com o id especificado!");
 
@@ -41,7 +40,17 @@ public class GetOneFileHandler implements CommandHandler<GetOneFileCommand, GetO
             usersId = file.get().getUsers().stream()
                     .map(User::getId)
                     .collect(Collectors.toList());
-                    
+        
+        for (var owner : file.get().getOwners()) {
+            usersId.add(owner.getUser().getId());
+        }
+
+        for (var product : file.get().getProducts()) {
+            for (var owner : product.getOwners()){
+                usersId.add(owner.getUser().getId());
+            }
+        }
+
         result = FilesMapperResponseExtensions.toGetOneFileDTO(file.get());
 
         if (usersId.stream().filter(item -> item == command.getUserRequestId()).findFirst() == null

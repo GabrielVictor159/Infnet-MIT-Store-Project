@@ -34,13 +34,29 @@ public interface FilesRepository extends JpaRepository<Files, UUID> {
          "FROM Files f WHERE f.id = :id")
    Optional<FileNotContentContainUsersIdDTO> findFileSummaryById(@Param("id") UUID id);
 
-   @Query("SELECT f FROM Files f LEFT JOIN FETCH f.users LEFT JOIN FETCH f.products WHERE f.id = :id")
-   Optional<Files> findByIdWithAssociations(@Param("id") UUID id);
+   @Query("""
+      SELECT DISTINCT f FROM Files f
+      LEFT JOIN FETCH f.users
+      LEFT JOIN FETCH f.owners o1
+      LEFT JOIN FETCH o1.user
+      LEFT JOIN FETCH f.products p
+      LEFT JOIN FETCH p.owners o2
+      LEFT JOIN FETCH o2.user
+      WHERE f.id = :id
+   """)
+   Optional<Files> findByIdWithDeepAssociations(@Param("id") UUID id);
+
+
 
    @Modifying
    @Transactional
    @Query(value = "DELETE FROM user_files WHERE file_id = :fileId", nativeQuery = true)
    int deleteUserAssociations(@Param("fileId") UUID fileId);
+
+   @Modifying
+   @Transactional
+   @Query(value = "DELETE FROM owner_files WHERE file_id = :fileId", nativeQuery = true)
+   int deleteOwnersAssociations(@Param("fileId") UUID fileId);
 
    @Modifying
    @Transactional

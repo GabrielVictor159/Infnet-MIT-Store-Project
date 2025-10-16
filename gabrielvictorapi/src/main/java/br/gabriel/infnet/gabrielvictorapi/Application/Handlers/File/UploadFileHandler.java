@@ -1,6 +1,8 @@
 package br.gabriel.infnet.gabrielvictorapi.Application.Handlers.File;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +12,7 @@ import br.gabriel.infnet.gabrielvictorapi.Application.Commands.File.UploadFileCo
 import br.gabriel.infnet.gabrielvictorapi.Application.DTO.File.UploadFileDTO;
 import br.gabriel.infnet.gabrielvictorapi.Domain.Enums.UserRulesEnum;
 import br.gabriel.infnet.gabrielvictorapi.Domain.Models.Files;
+import br.gabriel.infnet.gabrielvictorapi.Domain.Models.Owner;
 import br.gabriel.infnet.gabrielvictorapi.Domain.Models.User;
 import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Repositories.FilesRepository;
 import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Repositories.OwnerRepository;
@@ -36,9 +39,11 @@ public class UploadFileHandler implements CommandHandler<UploadFileCommand, Uplo
     @Transactional
     public UploadFileDTO handle(UploadFileCommand command) {
         var requestUser = userRepository.findById(command.getUserRequestId());
-        var ownersRequestUser = ownerRepository.findActiveOwnersWithProducts(requestUser.get());
+
         var users = userRepository.findAllById(command.getUsersId());
-        var products = productRepository.findAllById(command.getProductsId());
+        var products = productRepository.findByInIdWithDeepAssociations(command.getProductsId());
+        var owners = ownerRepository.findByInIdWithAssociations(command.getOwnersId());
+
         var foundUserIds = users.stream().map(User::getId).toList();
         var missingUserIds = command.getUsersId().stream()
             .filter(id -> !foundUserIds.contains(id))
@@ -56,38 +61,37 @@ public class UploadFileHandler implements CommandHandler<UploadFileCommand, Uplo
             throw new OperationException("IDs de produtos inválidos: " + missingProductIds);
         }
 
-        if (requestUser.get().getRule() != UserRulesEnum.Admin && !products.isEmpty()) {
-            var ownerProductIds = ownersRequestUser.stream()
-                .flatMap(owner -> owner.getProducts().stream())
-                .map(product -> product.getId())
-                .distinct()
-                .toList();
+        var foundOwnersIds = owners.stream().map(p -> p.getId()).toList();
+        var missingOwnerIds = command.getOwnersId().stream()
+            .filter(id -> !foundOwnersIds.contains(id))
+            .toList();
 
-            var unauthorizedProducts = products.stream()
-                .filter(product -> !ownerProductIds.contains(product.getId()))
-                .map(product -> product.getId())
-                .toList();
-
-            if (!unauthorizedProducts.isEmpty()) {
-                throw new ForbiddenException("O usuário não possui permissão sobre os produtos: " + unauthorizedProducts);
-            }
+        if (!missingOwnerIds.isEmpty()) {
+            throw new OperationException("IDs de vendedores inválidos: " + missingOwnerIds);
         }
 
-        if (requestUser.get().getRule() != UserRulesEnum.Admin) {
-            var requestUserId = requestUser.get().getId();
+        List<Integer> usersId = new ArrayList();
+        
+        for (var user : users) {
+            usersId.add(user.getId());
+        }
 
-            var otherUsers = users.stream()
-                .map(User::getId)
-                .filter(id -> !id.equals(requestUserId))
-                .toList();
+        for (var owner : owners) {
+            usersId.add(owner.getUser().getId());
+        }
 
-            if (!otherUsers.isEmpty()) {
-                throw new ForbiddenException("O usuário não possui permissão para associar outros usuários: " + otherUsers);
+        for (var product : products) {
+            for (var owner : product.getOwners()){
+                usersId.add(owner.getUser().getId());
             }
         }
 
         if(requestUser.get().getRule() != UserRulesEnum.Admin && users.isEmpty() && products.isEmpty()){
             throw new ForbiddenException("Você não tem permissão para adicionar um arquivo sem associação");
+        }
+
+        if(requestUser.get().getRule() != UserRulesEnum.Admin && usersId.stream().filter(item -> item == command.getUserRequestId()).findFirst() == null){
+            throw new ForbiddenException("Você não tem permissão para adicionar um arquivo as entidades selecionadas");
         }
         
         var file = new Files(); 
@@ -96,10 +100,9 @@ public class UploadFileHandler implements CommandHandler<UploadFileCommand, Uplo
         file.setFileType(command.getFileType());
         file.setUsers(new LinkedHashSet<>(users));
         file.setProducts(new LinkedHashSet<>(products));
+        file.setOwners(new LinkedHashSet<>(owners));
 
         file = filesRepository.save(file);
-
-        file = filesRepository.save(file); 
 
         for (var user : users) {
             user.getFiles().add(file);
@@ -111,9 +114,12 @@ public class UploadFileHandler implements CommandHandler<UploadFileCommand, Uplo
         }
         productRepository.saveAll(products);
 
+        for (var owner : owners) {
+            owner.getFiles().add(file);
+        }
+
         var result = new UploadFileDTO();
         result.setId(file.getId());
-
        
         return result;
     }

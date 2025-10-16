@@ -13,6 +13,7 @@ public class UploadFileCommand implements Command<UploadFileDTO>  {
     private Integer userRequestId;
     private List<Integer> usersId;
     private List<Integer> productsId;
+    private List<Integer> ownersId;
     @NotEmpty
     private byte[] content;
     @NotNull
@@ -37,6 +38,12 @@ public class UploadFileCommand implements Command<UploadFileDTO>  {
     public void setProductsId(List<Integer> productsId) {
         this.productsId = productsId;
     }
+    public List<Integer> getOwnersId() {
+        return ownersId;
+    }
+    public void setOwnersId(List<Integer> ownersId) {
+        this.ownersId = ownersId;
+    }
     public byte[] getContent() {
         return content;
     }
@@ -55,5 +62,6 @@ public class UploadFileCommand implements Command<UploadFileDTO>  {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
 
 }

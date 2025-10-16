@@ -39,6 +39,10 @@ public class Files {
 
     @ManyToMany(mappedBy = "files")
     @JsonBackReference
+    private Set<Owner> owners = new HashSet<>();
+
+    @ManyToMany(mappedBy = "files")
+    @JsonBackReference
     private Set<User> users = new HashSet<>();
 
     @ManyToMany(mappedBy = "files")
@@ -91,6 +95,14 @@ public class Files {
 
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public Set<Owner> getOwners() {
+        return owners;
+    }
+
+    public void setOwners(Set<Owner> owners) {
+        this.owners = owners;
     }
 
     public Set<User> getUsers() {

@@ -14,5 +14,11 @@ public interface OwnerRepository extends JpaRepository<Owner, Integer> {
     @Query("SELECT DISTINCT o FROM Owner o JOIN FETCH o.products WHERE o.user = :user AND o.isActive = true")
     List<Owner> findActiveOwnersWithProducts(@Param("user") User user);
 
+    @Query("""
+      SELECT DISTINCT o FROM Owner o
+      LEFT JOIN FETCH o.users
+      WHERE o.id in :ids
+    """)
+   List<Owner> findByInIdWithAssociations(@Param("ids") List<Integer> ids);
 }
 

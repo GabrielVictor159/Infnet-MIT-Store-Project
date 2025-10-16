@@ -29,11 +29,15 @@ public class DeleteOneFileHandler implements CommandHandler<DeleteOneFileCommand
         var requestUser = userRepository.findById(command.getRequestUser());
         var ownersUser = ownerRepository.findActiveOwnersWithProducts(requestUser.get());
 
-        var file = filesRepository.findByIdWithAssociations(command.getId());
+        var file = filesRepository.findByIdWithDeepAssociations(command.getId());
         if (!file.isPresent())
             throw new OperationException("Não foi possivel localizar o arquivo com o id especificado!");
         
         if(requestUser.get().getRule()!=UserRulesEnum.Admin){
+           boolean hasPermissionOwner= file.get().getOwners().stream()
+            .anyMatch(owner -> ownersUser.stream()
+                .anyMatch(owner2 -> owner2.getId().equals(owner.getId())));
+
            boolean hasPermissionProduct = file.get().getProducts().stream()
             .anyMatch(product -> ownersUser.stream()
                 .anyMatch(owner -> owner.getProducts().contains(product)));
@@ -41,12 +45,13 @@ public class DeleteOneFileHandler implements CommandHandler<DeleteOneFileCommand
              boolean hasPermissionUser = file.get().getUsers().stream()
             .anyMatch(user -> user.getId().equals(requestUser.get().getId()));
 
-            if(!hasPermissionProduct && !hasPermissionUser){
+            if(!hasPermissionProduct && !hasPermissionUser && !hasPermissionOwner){
                 throw new ForbiddenException("O usuário não possui permissão para excluir este arquivo.");
             }
         }
         filesRepository.deleteProductAssociations(file.get().getId());
         filesRepository.deleteUserAssociations(file.get().getId());
+        filesRepository.deleteOwnersAssociations(file.get().getId());
         filesRepository.deleteById(file.get().getId());
 
         return true;

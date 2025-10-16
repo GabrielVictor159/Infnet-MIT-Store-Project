@@ -28,6 +28,8 @@ public class Product {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
+    private String description;
+    @Column(nullable = false)
     private Double price;
     @Column(nullable = false)
     private Integer amount;
@@ -65,6 +67,14 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Double getPrice() {
