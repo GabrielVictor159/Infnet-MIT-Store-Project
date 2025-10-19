@@ -6,22 +6,19 @@ import org.hibernate.validator.constraints.br.CNPJ;
 
 import br.gabriel.infnet.gabrielvictorapi.Shared.MediatorPattern.Command;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class CreateOwnerCommand implements Command<Integer> {
+public class AlterOwnerCommand implements Command<Boolean> {
     @NotNull
     private Integer requestUserId;
     @NotNull
-    private Integer userId;
-    @NotBlank(message = "O nome não pode ser nulo ou vazio.")
+    private Integer id;
     @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres.")
-    private String name;
-    @NotBlank(message = "A descrição não pode ser nulo ou vazio.")
+    private Optional<String> name;
     @Size(min = 3, max = 1000, message = "A descrição deve ter entre 3 e 1000 caracteres.")
-    private String description;
+    private Optional<String> description;
     @Pattern(regexp = "^[0-9\\s\\-()]*$", message = "O telefone contém caracteres inválidos.")
     private Optional<String> contactPhone;
     @Email(message = "O formato do email é inválido.")
@@ -36,22 +33,22 @@ public class CreateOwnerCommand implements Command<Integer> {
     public void setRequestUserId(Integer requestUserId) {
         this.requestUserId = requestUserId;
     }
-    public Integer getUserId() {
-        return userId;
+    public Integer getId() {
+        return id;
     }
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setId(Integer id) {
+        this.id = id;
     }
-    public String getName() {
+    public Optional<String> getName() {
         return name;
     }
-    public void setName(String name) {
+    public void setName(Optional<String> name) {
         this.name = name;
     }
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return description;
     }
-    public void setDescription(String description) {
+    public void setDescription(Optional<String> description) {
         this.description = description;
     }
     public Optional<String> getContactPhone() {
@@ -84,5 +81,4 @@ public class CreateOwnerCommand implements Command<Integer> {
     public void setAddress(Optional<String> address) {
         this.address = address;
     }
-  
 }

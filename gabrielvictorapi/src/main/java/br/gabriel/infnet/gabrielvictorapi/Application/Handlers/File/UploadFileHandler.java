@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.File.GetOneFileCommand;
@@ -13,11 +14,14 @@ import br.gabriel.infnet.gabrielvictorapi.Application.DTO.File.UploadFileDTO;
 import br.gabriel.infnet.gabrielvictorapi.Domain.Enums.UserRulesEnum;
 import br.gabriel.infnet.gabrielvictorapi.Domain.Models.Files;
 import br.gabriel.infnet.gabrielvictorapi.Domain.Models.Owner;
+import br.gabriel.infnet.gabrielvictorapi.Domain.Models.Product;
 import br.gabriel.infnet.gabrielvictorapi.Domain.Models.User;
 import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Repositories.FilesRepository;
 import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Repositories.OwnerRepository;
 import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Repositories.ProductRepository;
 import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Repositories.UserRepository;
+import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Specifications.OwnerSpecification;
+import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Specifications.ProductSpecification;
 import br.gabriel.infnet.gabrielvictorapi.Shared.Exceptions.ForbiddenException;
 import br.gabriel.infnet.gabrielvictorapi.Shared.Exceptions.OperationException;
 import br.gabriel.infnet.gabrielvictorapi.Shared.MediatorPattern.CommandHandler;
@@ -41,8 +45,10 @@ public class UploadFileHandler implements CommandHandler<UploadFileCommand, Uplo
         var requestUser = userRepository.findById(command.getUserRequestId());
 
         var users = userRepository.findAllById(command.getUsersId());
-        var products = productRepository.findByInIdWithDeepAssociations(command.getProductsId());
-        var owners = ownerRepository.findByInIdWithAssociations(command.getOwnersId());
+        Specification<Product> specProducts = ProductSpecification.findByOwnerIdsWithDeepAssociations(command.getProductsId());
+        var products = productRepository.findAll(specProducts);
+        Specification<Owner> specOwners = OwnerSpecification.findByIdsWithUser(command.getOwnersId());
+        var owners = ownerRepository.findAll(specOwners);
 
         var foundUserIds = users.stream().map(User::getId).toList();
         var missingUserIds = command.getUsersId().stream()
@@ -90,7 +96,7 @@ public class UploadFileHandler implements CommandHandler<UploadFileCommand, Uplo
             throw new ForbiddenException("Você não tem permissão para adicionar um arquivo sem associação");
         }
 
-        if(requestUser.get().getRule() != UserRulesEnum.Admin && usersId.stream().filter(item -> item == command.getUserRequestId()).findFirst() == null){
+        if(requestUser.get().getRule() != UserRulesEnum.Admin && !usersId.isEmpty() && usersId.stream().filter(item -> item != command.getUserRequestId()).findFirst() != null){
             throw new ForbiddenException("Você não tem permissão para adicionar um arquivo as entidades selecionadas");
         }
         

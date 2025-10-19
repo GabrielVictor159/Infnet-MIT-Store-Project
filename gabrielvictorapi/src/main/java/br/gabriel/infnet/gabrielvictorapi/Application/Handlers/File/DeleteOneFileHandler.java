@@ -1,13 +1,16 @@
 package br.gabriel.infnet.gabrielvictorapi.Application.Handlers.File;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.File.DeleteOneFileCommand;
 import br.gabriel.infnet.gabrielvictorapi.Domain.Enums.UserRulesEnum;
+import br.gabriel.infnet.gabrielvictorapi.Domain.Models.Owner;
 import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Repositories.FilesRepository;
 import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Repositories.OwnerRepository;
 import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Repositories.UserRepository;
+import br.gabriel.infnet.gabrielvictorapi.Infraestructure.Specifications.OwnerSpecification;
 import br.gabriel.infnet.gabrielvictorapi.Shared.Exceptions.ForbiddenException;
 import br.gabriel.infnet.gabrielvictorapi.Shared.Exceptions.OperationException;
 import br.gabriel.infnet.gabrielvictorapi.Shared.MediatorPattern.CommandHandler;
@@ -27,7 +30,8 @@ public class DeleteOneFileHandler implements CommandHandler<DeleteOneFileCommand
     @Transactional
     public Boolean handle(DeleteOneFileCommand command) {
         var requestUser = userRepository.findById(command.getRequestUser());
-        var ownersUser = ownerRepository.findActiveOwnersWithProducts(requestUser.get());
+        Specification<Owner> specOwners = OwnerSpecification.findActiveOwnersWithProducts(requestUser.get());
+        var ownersUser = ownerRepository.findAll(specOwners);
 
         var file = filesRepository.findByIdWithDeepAssociations(command.getId());
         if (!file.isPresent())

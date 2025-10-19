@@ -1,5 +1,7 @@
 package br.gabriel.infnet.gabrielvictorapi.Application.Handlers.User;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +14,7 @@ import br.gabriel.infnet.gabrielvictorapi.Shared.MediatorPattern.CommandHandler;
 import jakarta.transaction.Transactional;
 
 @Component
-public class AlterUserCommandHandler implements CommandHandler<AlterUserCommand, Boolean> {
+public class AlterUserHandler implements CommandHandler<AlterUserCommand, Boolean> {
 
     @Autowired
     private UserRepository userRepository;
@@ -34,7 +36,8 @@ public class AlterUserCommandHandler implements CommandHandler<AlterUserCommand,
         if (command.getCpf() != null) user.get().setCpf(command.getCpf());
         if (command.getPhone() != null) user.get().setPhone(command.getPhone());
         if (command.getBirthDate() != null) user.get().setBirthDate(command.getBirthDate());
-
+        user.get().setUpdatedAt(LocalDateTime.now());
+        
         userRepository.save(user.get());
 
         return true;

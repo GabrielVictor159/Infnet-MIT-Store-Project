@@ -70,6 +70,7 @@ public class FileController {
     public ResponseEntity<Object> uploadMultipart(
         @RequestParam Optional<List<Integer>> usersId,
         @RequestParam Optional<List<Integer>> productsId,
+        @RequestParam Optional<List<Integer>> ownersId,
         @RequestParam FileTypeEnum fileType,
         @Parameter(
             description = "Arquivo para upload",
@@ -84,6 +85,7 @@ public class FileController {
         command.setUserRequestId(idRequestUser);
         command.setUsersId(usersId.isPresent() ? usersId.get(): new ArrayList<Integer>());
         command.setProductsId(productsId.isPresent() ? productsId.get(): new ArrayList<Integer>());
+        command.setOwnersId(ownersId.isPresent()? ownersId.get(): new ArrayList<Integer>());
         command.setFileType(fileType);
         command.setFileName(file.getOriginalFilename());
         command.setContent(file.getBytes());
@@ -96,6 +98,7 @@ public class FileController {
     public ResponseEntity<Object> uploadBase64(
             @RequestParam Optional<List<Integer>> usersId,
             @RequestParam Optional<List<Integer>> productsId,
+            @RequestParam Optional<List<Integer>> ownersId,
             @RequestParam FileTypeEnum fileType,
             @RequestParam String fileName,
             @RequestBody String base64Content,
@@ -108,6 +111,7 @@ public class FileController {
         command.setUserRequestId(idRequestUser);
         command.setUsersId(usersId.isPresent() ? usersId.get(): new ArrayList<Integer>());
         command.setProductsId(productsId.isPresent() ? productsId.get(): new ArrayList<Integer>());
+        command.setOwnersId(ownersId.isPresent()? ownersId.get(): new ArrayList<Integer>());
         command.setFileType(fileType);
         command.setFileName(fileName);
         command.setContent(decoded);

@@ -2,31 +2,31 @@ package br.gabriel.infnet.gabrielvictorapi.Api.Controllers.Requests.Owner;
 
 import java.util.Optional;
 
-public class CreateOwnerRequest {
-    private Integer userId;
-    private String name;
-    private String description;
+public class AlterOwnerRequest {
+    private Integer id;
+    private Optional<String> name;
+    private Optional<String> description;
     private Optional<String> contactPhone;
     private Optional<String> contactEmail;
     private Optional<String> cnpj;
     private Optional<String> cep;
     private Optional<String> address;
-    public Integer getUserId() {
-        return userId;
+    public Integer getId() {
+        return id;
     }
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setId(Integer id) {
+        this.id = id;
     }
-    public String getName() {
+    public Optional<String> getName() {
         return name;
     }
-    public void setName(String name) {
+    public void setName(Optional<String> name) {
         this.name = name;
     }
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return description;
     }
-    public void setDescription(String description) {
+    public void setDescription(Optional<String> description) {
         this.description = description;
     }
     public Optional<String> getContactPhone() {
@@ -59,5 +59,4 @@ public class CreateOwnerRequest {
     public void setAddress(Optional<String> address) {
         this.address = address;
     }
-
 }
