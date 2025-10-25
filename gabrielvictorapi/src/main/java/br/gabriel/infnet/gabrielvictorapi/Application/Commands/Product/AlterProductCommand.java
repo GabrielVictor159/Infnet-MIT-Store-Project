@@ -3,10 +3,13 @@ package br.gabriel.infnet.gabrielvictorapi.Application.Commands.Product;
 import java.util.Optional;
 
 import br.gabriel.infnet.gabrielvictorapi.Shared.MediatorPattern.Command;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class AlterProductCommand implements Command<Boolean> {
+    @NotNull
     private Integer requestUserId;
+    @NotNull
     private Integer productId;
     @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres.")
     private Optional<String> name;

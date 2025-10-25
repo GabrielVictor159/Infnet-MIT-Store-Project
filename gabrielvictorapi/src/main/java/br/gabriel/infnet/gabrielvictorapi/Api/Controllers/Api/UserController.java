@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import br.gabriel.infnet.gabrielvictorapi.Api.Controllers.Requests.User.ResetPas
 import br.gabriel.infnet.gabrielvictorapi.Api.Mappers.User.UserMapperRequestsExtension;
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.AlterUserCommand;
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.CreateUserCommand;
+import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.DisableUserCommand;
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.ForbiddenPasswordCommand;
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.GetUserCommand;
 import br.gabriel.infnet.gabrielvictorapi.Application.Commands.User.ResetPasswordCommand;
@@ -74,8 +76,8 @@ public class UserController {
         return new ResponseEntity<>("Usuário alterado com sucesso", HttpStatus.OK);
     }
 
-    @PostMapping("/reset-password/{id}")
-    public ResponseEntity<Object> processReset(
+    @PostMapping("/ResetPassword/{id}")
+    public ResponseEntity<Object> ProcessReset(
             @PathVariable UUID id,
             @RequestBody ResetPasswordRequest request) {
         ResetPasswordCommand command = new ResetPasswordCommand();
@@ -84,6 +86,17 @@ public class UserController {
         command.setConfirmPassword(request.getConfirmPassword());
 
         String result = mediator.Handler(command);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/DisableUser/{id}")
+    public ResponseEntity<Object> DisableUser(@PathVariable Integer id, HttpServletRequest httpRequest) {
+        var idRequestUser = jwtTokenService.getIdFromHttpRequest(httpRequest);
+        var command = new DisableUserCommand();
+        command.setId(id);
+        command.setRequestUserId(idRequestUser);
+
+        Boolean result = mediator.Handler(command);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class CreateProductCommand implements Command<Integer> {
+    @NotNull
     private Integer requestUserId;
     @NotBlank(message = "O nome não pode ser nulo ou vazio.")
     @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres.")

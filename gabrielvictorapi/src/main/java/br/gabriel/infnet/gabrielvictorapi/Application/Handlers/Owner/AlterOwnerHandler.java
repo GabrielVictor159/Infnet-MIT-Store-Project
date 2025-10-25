@@ -39,7 +39,14 @@ public class AlterOwnerHandler implements CommandHandler<AlterOwnerCommand, Bool
             throw new ForbiddenException("Você não tem permissão de alterar o vendedor");
         }
 
-        BeanUtils.copyProperties(command, owner.get());
+        if (command.getName().isPresent()) owner.get().setName(command.getName().get());
+        if (command.getDescription().isPresent()) owner.get().setDescription(command.getDescription().get());
+        if (command.getContactPhone().isPresent()) owner.get().setContactPhone(command.getContactPhone().get());
+        if (command.getContactEmail().isPresent()) owner.get().setContactEmail(command.getContactEmail().get());
+        if (command.getCnpj().isPresent()) owner.get().setCnpj(command.getCnpj().get());
+        if (command.getCep().isPresent()) owner.get().setCep(command.getCep().get());
+        if (command.getAddress().isPresent()) owner.get().setAddress(command.getAddress().get());
+
         owner.get().setUpdatedAt(LocalDateTime.now());
         ownerRepository.save(owner.get());
         return true;

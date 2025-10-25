@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class AlterUserCommand implements Command<Boolean> {
-
+    @NotNull
     private Integer id;
     @NotNull
     private Integer requestUserId;
